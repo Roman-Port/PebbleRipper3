@@ -1,0 +1,7 @@
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\obj\Debug\PebbleRipper3.csprojAssemblyReference.cache
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\obj\Debug\PebbleRipper3.csproj.CoreCompileInputs.cache
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\bin\Debug\PebbleRipper3.exe.config
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\bin\Debug\PebbleRipper3.exe
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\bin\Debug\PebbleRipper3.pdb
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\obj\Debug\PebbleRipper3.exe
+c:\users\roman\source\repos\PebbleRipper3\PebbleRipper3\obj\Debug\PebbleRipper3.pdb
