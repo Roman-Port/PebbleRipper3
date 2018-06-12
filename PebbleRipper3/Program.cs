@@ -21,6 +21,20 @@ namespace PebbleRipper3
 
         static void Main(string[] args)
         {
+            while(true)
+            {
+                Console.WriteLine("PebbleRipper 3 by RomanPort");
+                Console.WriteLine("\r\nPlease copy a folder to place files. Make sure it is empty and has more than 5 GB of free space.");
+                savePath = Console.ReadLine().TrimEnd('\\') + "\\";
+                Console.Clear();
+                if (Directory.Exists(savePath))
+                    break;
+                else
+                    Console.WriteLine("That folder wasn't found. \r\n");
+            }
+            Console.Clear();
+            Console.WriteLine("Finding apps...");
+
             SeekAll();
             Console.WriteLine("Converting apps...");
             List<PebbleAppOutput> output = new List<PebbleAppOutput>();
@@ -45,32 +59,42 @@ namespace PebbleRipper3
             Thread updateThread = new Thread(new ThreadStart(UpdateDownloadProgress));
             updateThread.Start();
 
-            assets.AsParallel().ForAll(delegate (AssetToDownload app)
+            assets.AsParallel().ForAll(delegate (AssetToDownload asset)
             {
                 try
                 {
                     //Make folder
-                    string[] paths = app.filename.Split('\\');
-                    Directory.CreateDirectory(app.filename.Substring(0, app.filename.Length - paths[paths.Length - 1].Length));
+                    string[] paths = asset.filename.Split('\\');
+                    Directory.CreateDirectory(asset.filename.Substring(0, asset.filename.Length - paths[paths.Length - 1].Length));
                     //Download
                     using (var client = new WebClient())
                     {
-                        client.DownloadFile(app.url, app.filename);
+                        client.DownloadFile(asset.url, asset.filename);
                     }
-                    app.done = true;
+                    asset.done = true;
                 }
                 catch (Exception ex)
                 {
-                    assetFails.Add("Failed to download URL at " + app.url + " with filename " + app.filename + " with error " + ex.Message+"\r\n");
-                    app.done = true;
+                    assetFails.Add("Failed to download URL at " + asset.url + " with filename " + asset.filename + " with error " + ex.Message+"\r\n");
+                    asset.done = true;
                 }
             });
             //Write errors
             File.WriteAllLines(savePath + "errors.txt", assetFails.ToArray());
             //Stop thread
             updateThread.Abort();
-            Console.WriteLine("Done");
+            Console.WriteLine("Done. "+assetFails.Count+ " download errors occurred. Check /errors.txt for more info.");
             Console.ReadLine();
+        }
+
+        public static void SaveAsset(string filename, byte[] data)
+        {
+            AssetToDownload asset = new AssetToDownload(filename, "");
+            //Make folder
+            string[] paths = asset.filename.Split('\\');
+            Directory.CreateDirectory(asset.filename.Substring(0, asset.filename.Length - paths[paths.Length - 1].Length));
+            //Save
+            File.WriteAllBytes(filename, data);
         }
 
         public static void UpdateDownloadProgress()
@@ -160,6 +184,8 @@ namespace PebbleRipper3
             string url = "https://api2.getpebble.com/v2/apps/collection/all/"+type.ToString().Replace('_','-')+"?platform=all&hardware="+hardware.ToString()+"&filter_hardware=false&image_ratio=1&limit="+limit.ToString()+"&offset=" + offset.ToString();
             //Request
             string raw = DoGetRequest(url);
+            //Save
+            SaveAsset(savePath + "raw_pages\\" + type.ToString() + "_" + hardware.ToString() + "_" + offset.ToString() + ".json", Encoding.UTF8.GetBytes(raw));
             //Deserialize JSON.
             PebbleApp_Page page = (PebbleApp_Page)DeserializeObject(raw, typeof(PebbleApp_Page));
             //Extract data and return it
