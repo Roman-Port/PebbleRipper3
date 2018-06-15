@@ -24,7 +24,7 @@ namespace PebbleRipper3
             while(true)
             {
                 Console.WriteLine("PebbleRipper 3 by RomanPort");
-                Console.WriteLine("\r\nPlease copy a folder to place files. Make sure it is empty and has more than 5 GB of free space.");
+                Console.WriteLine("\r\nPlease copy a folder to place files. Make sure it is empty and has more than 5 GB of free space. You can press the right click button to paste.");
                 savePath = Console.ReadLine().TrimEnd('\\') + "\\";
                 Console.Clear();
                 if (Directory.Exists(savePath))
@@ -106,7 +106,7 @@ namespace PebbleRipper3
                 float done = ((float)noComplete / (float)noTotal) * 100;
                 double r = Math.Round(done, 0);
 
-                Console.Write("\rProgress: " + r.ToString() + "% (" + noComplete.ToString() + "/" + noTotal.ToString() + ") - "+assetFails.ToString()+" assets failed.");
+                Console.Write("\rProgress: " + r.ToString() + "% (" + noComplete.ToString() + "/" + noTotal.ToString() + ")");
                 Thread.Sleep(100);
             }
         }
